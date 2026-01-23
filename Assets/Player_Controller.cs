@@ -41,7 +41,7 @@ public class Player_Controller : MonoBehaviour
 
         if (isGrounded && movementY > 0)
         {
-            rb.AddForce(new Vector2(0, 100));
+            rb.AddForce(new Vector2(0, 150));
         }
     }
 
@@ -65,11 +65,11 @@ public class Player_Controller : MonoBehaviour
             int way;
             if (movementX < 0)
             {
-                way = -1000;
+                way = -1500;
             }
             else
             {
-                way = 1000;
+                way = 1500;
             }
                 rb.AddForce(new Vector2(way, 0));
             if (!isGrounded)
