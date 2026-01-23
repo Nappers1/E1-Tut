@@ -7,11 +7,11 @@ public class Player_Controller : MonoBehaviour
     float movementX;
     float movementY;
     [SerializeField] float speed = 5.0f;
-    [SerializeField] float dash = 15.0f;
     Rigidbody2D rb;
     bool isGrounded = true;
     int score = 0;
     bool canDash = true;
+    bool doubleJump = false;
 
     Animator animator;
     SpriteRenderer spriteRenderer;
@@ -43,7 +43,6 @@ public class Player_Controller : MonoBehaviour
         {
             rb.AddForce(new Vector2(0, 100));
         }
-
     }
 
     void OnMove(InputValue value)
@@ -53,8 +52,12 @@ public class Player_Controller : MonoBehaviour
         movementY = v.y;
         //Debug.Log("Movement X = " + movementX);
         //Debug.Log("Movement Y = " + movementY);
+        if (v.y > 0 && !isGrounded && doubleJump)
+        {
+            rb.AddForce(new Vector2(0, 200));
+            doubleJump = false;
+        }
     }
-
     void OnDash(InputValue value)
     {
         if (canDash)
@@ -62,11 +65,11 @@ public class Player_Controller : MonoBehaviour
             int way;
             if (movementX < 0)
             {
-                way = -800;
+                way = -1000;
             }
             else
             {
-                way = 800;
+                way = 1000;
             }
                 rb.AddForce(new Vector2(way, 0));
             if (!isGrounded)
@@ -91,6 +94,7 @@ public class Player_Controller : MonoBehaviour
         if (collision.gameObject.CompareTag("Ground"))
         {
             isGrounded = false;
+            doubleJump = true;
             animator.SetBool("isJumping", true);
         }
     }
