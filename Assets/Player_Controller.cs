@@ -10,9 +10,14 @@ public class Player_Controller : MonoBehaviour
     Rigidbody2D rb;
     bool isGrounded = true;
     int score = 0;
+
+    Animator animator;
+    SpriteRenderer spriteRenderer;
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     // Update is called once per frame
@@ -22,6 +27,16 @@ public class Player_Controller : MonoBehaviour
         //float movementDistanceY = movementY * speed * Time.deltaTime;
         //transform.position = new Vector2(transform.position.x + movementDistanceX, transform.position.y + movementDistanceY);
         rb.linearVelocity = new Vector2(movementX * speed, rb.linearVelocity.y);
+        if (!Mathf.Approximately(movementX, 0f)) 
+        {
+            animator.SetBool("isRunning", true);
+            spriteRenderer.flipX = movementX < 0;
+        }
+        else
+        {
+            animator.SetBool("isRunning", false);
+        }
+
         if (isGrounded && movementY > 0)
         {
             rb.AddForce(new Vector2(0, 100));
@@ -42,6 +57,7 @@ public class Player_Controller : MonoBehaviour
         if (collision.gameObject.CompareTag("Ground"))
         {
             isGrounded = true;
+            animator.SetBool("isJumping", false);
         }
     }
 
@@ -50,6 +66,7 @@ public class Player_Controller : MonoBehaviour
         if (collision.gameObject.CompareTag("Ground"))
         {
             isGrounded = false;
+            animator.SetBool("isJumping", true);
         }
     }
 
