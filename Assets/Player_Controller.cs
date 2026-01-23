@@ -7,9 +7,11 @@ public class Player_Controller : MonoBehaviour
     float movementX;
     float movementY;
     [SerializeField] float speed = 5.0f;
+    [SerializeField] float dash = 15.0f;
     Rigidbody2D rb;
     bool isGrounded = true;
     int score = 0;
+    bool canDash = true;
 
     Animator animator;
     SpriteRenderer spriteRenderer;
@@ -27,7 +29,7 @@ public class Player_Controller : MonoBehaviour
         //float movementDistanceY = movementY * speed * Time.deltaTime;
         //transform.position = new Vector2(transform.position.x + movementDistanceX, transform.position.y + movementDistanceY);
         rb.linearVelocity = new Vector2(movementX * speed, rb.linearVelocity.y);
-        if (!Mathf.Approximately(movementX, 0f)) 
+        if (!Mathf.Approximately(movementX, 0f))
         {
             animator.SetBool("isRunning", true);
             spriteRenderer.flipX = movementX < 0;
@@ -41,6 +43,7 @@ public class Player_Controller : MonoBehaviour
         {
             rb.AddForce(new Vector2(0, 100));
         }
+
     }
 
     void OnMove(InputValue value)
@@ -52,11 +55,33 @@ public class Player_Controller : MonoBehaviour
         //Debug.Log("Movement Y = " + movementY);
     }
 
+    void OnDash(InputValue value)
+    {
+        if (canDash)
+        {
+            int way;
+            if (movementX < 0)
+            {
+                way = -800;
+            }
+            else
+            {
+                way = 800;
+            }
+                rb.AddForce(new Vector2(way, 0));
+            if (!isGrounded)
+            {
+                canDash = false;
+            }
+        }
+    }
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Ground"))
         {
             isGrounded = true;
+            canDash = true;
             animator.SetBool("isJumping", false);
         }
     }
